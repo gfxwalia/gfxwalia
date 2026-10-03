@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="hi" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sumit Walia | Motion Graphics, 3D & VFX Artist</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Tone.js for Micro Audio Interactions -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+  <!-- Google Fonts: Syne & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            syne: ['Syne', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          colors: {
+            dark: {
+              950: '#04060a',
+              900: '#07090e',
+              800: '#0d1117',
+              700: '#161b22',
+              600: '#21262d'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #07090e;
+      color: #e6edf3;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+    }
+    .glow-cyan {
+      box-shadow: 0 0 50px rgba(6, 182, 212, 0.25);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #06b6d4;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body class="custom-scrollbar selection:bg-cyan-500 selection:text-black">
+
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 left-0 w-full z-40 backdrop-blur-xl bg-dark-900/80 border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <a href="#" class="flex items-center space-x-3 text-xl font-bold font-syne tracking-wider text-white">
+        <div class="w-11 h-11 rounded-full overflow-hidden border border-cyan-400/60 bg-dark-800 shadow-[0_0_12px_rgba(6,182,212,0.4)] flex-shrink-0">
+          <img id="navAvatarImg" src="profile.png" alt="Sumit Walia" class="w-full h-full object-cover object-top block" />
+        </div>
+        <span>SUMIT<span class="text-cyan-400">.WALIA</span></span>
+      </a>
+
+      <div class="hidden md:flex items-center space-x-8 text-sm font-mono text-zinc-400">
+        <a href="#work" class="hover:text-cyan-400 transition-colors">WORK</a>
+        <a href="#skills" class="hover:text-cyan-400 transition-colors">SKILLS</a>
+        <a href="#pipeline" class="hover:text-cyan-400 transition-colors">PIPELINE</a>
+        <a href="#testimonials" class="hover:text-cyan-400 transition-colors">REVIEWS</a>
+        <a href="#contact" class="hover:text-cyan-400 transition-colors">CONTACT</a>
+      </div>
+
+      <div class="flex items-center space-x-3 sm:space-x-4">
+        <button id="audioToggleBtn" title="Toggle Sound FX" class="p-2.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-cyan-400 transition-colors">
+          <i data-lucide="volume-2" id="audioIcon" class="w-4 h-4"></i>
+        </button>
+
+        <button onclick="openAuthModal()" title="Admin Login / Dashboard" class="px-3.5 py-2 rounded-full text-xs font-mono font-medium border border-cyan-500/40 bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500 hover:text-black transition-all flex items-center space-x-1.5">
+          <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+          <span>ADMIN</span>
+        </button>
+
+        <a href="#contact" class="hidden sm:inline-block px-5 py-2.5 rounded-full text-xs font-mono font-semibold bg-cyan-500 text-black hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all">
+          LET'S CONNECT
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="relative min-h-screen pt-24 sm:pt-28 pb-16 flex flex-col justify-center px-6 overflow-hidden">
+    <canvas id="kineticCanvas" class="absolute inset-0 pointer-events-none z-0 opacity-40"></canvas>
+
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[350px] bg-gradient-to-tr from-cyan-500/20 via-violet-600/10 to-transparent blur-[140px] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center relative z-10">
+      
+      <!-- Left Column: Name, Profile Badge & Stats -->
+      <div class="w-full min-w-0 space-y-6 -mt-2 lg:-mt-6">
+        
+        <div class="flex items-center space-x-5 sm:space-x-6">
+          <div class="relative w-28 h-28 sm:w-36 sm:h-36 rounded-3xl overflow-hidden border-2 border-cyan-400/70 bg-dark-800 shadow-[0_0_35px_rgba(6,182,212,0.45)] flex-shrink-0 group">
+            <img id="heroAvatarImg" src="profile.png" alt="Sumit Walia" class="w-full h-full object-cover object-top block transition-transform duration-500 group-hover:scale-105" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
+          </div>
+
+          <div class="space-y-2">
+            <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-mono">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              <span>MOTION GRAPHIC & 3D ARTIST</span>
+            </div>
+            <p class="text-xs sm:text-sm font-mono text-emerald-400 flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+              <span>Available for Freelance & Contracts</span>
+            </p>
+          </div>
+        </div>
+
+        <h1 class="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-extrabold font-syne tracking-tight text-white leading-none pt-1">
+          SUMIT <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-indigo-400">WALIA</span>
+        </h1>
+
+        <div class="h-6 flex items-center space-x-2 text-sm sm:text-base font-mono text-zinc-300">
+          <span class="text-cyan-400">&gt;</span>
+          <span id="typewriterText" class="border-r-2 border-cyan-400 pr-1 truncate"></span>
+        </div>
+
+        <p class="text-zinc-400 text-sm sm:text-base max-w-xl leading-relaxed pt-1">
+          Crafting high-impact motion graphics, graphic designing, character rigging, Autodesk Maya 3D animations, cinematic video edits, and VFX composites that elevate brands into visual spectacles.
+        </p>
+
+        <div class="flex flex-wrap gap-4 pt-1">
+          <a href="#work" class="px-7 py-3.5 rounded-xl font-mono text-xs font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-black hover:opacity-95 shadow-lg shadow-cyan-500/20 transition-all flex items-center space-x-2">
+            <span>EXPLORE WORK</span>
+            <i data-lucide="arrow-down-right" class="w-4 h-4"></i>
+          </a>
+          <a href="#contact" class="px-7 py-3.5 rounded-xl font-mono text-xs font-bold border border-white/10 bg-white/5 hover:bg-white/10 text-white transition-all">
+            BOOK A PROJECT
+          </a>
+        </div>
+
+        <!-- 3 Quick Stats Columns -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 pt-3">
+          <div class="min-h-[150px] py-7 px-5 rounded-2xl bg-dark-800/90 border border-white/5 flex flex-col justify-between hover:border-cyan-500/40 transition-colors shadow-lg shadow-black/40">
+            <span class="text-3xl sm:text-4xl font-extrabold font-syne text-white tracking-tight">6+</span>
+            <div>
+              <p class="text-xs sm:text-sm font-semibold text-zinc-300">Years Crafting</p>
+              <p class="text-[9px] sm:text-[10px] font-mono text-cyan-400 tracking-wider uppercase mt-1">Experience</p>
+            </div>
+          </div>
+
+          <div class="min-h-[150px] py-7 px-5 rounded-2xl bg-dark-800/90 border border-white/5 flex flex-col justify-between hover:border-cyan-500/40 transition-colors shadow-lg shadow-black/40">
+            <span class="text-3xl sm:text-4xl font-extrabold font-syne text-cyan-400 tracking-tight">180+</span>
+            <div>
+              <p class="text-xs sm:text-sm font-semibold text-zinc-300">Rendered</p>
+              <p class="text-[9px] sm:text-[10px] font-mono text-cyan-400 tracking-wider uppercase mt-1">Commercial & 3D</p>
+            </div>
+          </div>
+
+          <div class="min-h-[150px] py-7 px-5 rounded-2xl bg-dark-800/90 border border-white/5 flex flex-col justify-between hover:border-cyan-500/40 transition-colors shadow-lg shadow-black/40">
+            <span class="text-3xl sm:text-4xl font-extrabold font-syne text-indigo-400 tracking-tight">99.8%</span>
+            <div>
+              <p class="text-xs sm:text-sm font-semibold text-zinc-300">Delight</p>
+              <p class="text-[9px] sm:text-[10px] font-mono text-cyan-400 tracking-wider uppercase mt-1">Retention</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Viewport -->
+      <div class="w-full min-w-0">
+        <div id="viewportContainer" class="relative w-full aspect-video rounded-3xl overflow-hidden border border-cyan-500/40 bg-black flex items-center justify-center glow-cyan group">
+          <video 
+            id="mainShowreelVideo" 
+            src="Diego-Body.mp4" 
+            class="w-full h-full object-contain bg-black z-10" 
+            autoplay 
+            muted 
+            loop 
+            playsinline>
+          </video>
+
+          <div class="absolute top-4 left-4 z-30 flex items-center space-x-2 bg-dark-900/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-[11px] font-mono text-cyan-400 pointer-events-none">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span>4K 60FPS • RIGGING PREVIEW</span>
+          </div>
+
+          <div class="absolute bottom-4 right-4 z-30 flex items-center space-x-2 bg-dark-900/80 backdrop-blur-md px-3 py-1 rounded-xl border border-white/10 text-[10px] font-mono text-zinc-400 pointer-events-none">
+            <span>MAYA</span>
+            <span class="text-white/20">•</span>
+            <span>AFTER EFFECTS</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FEATURED PRODUCTIONS -->
+  <section id="work" class="py-24 px-6 border-t border-white/5 relative bg-dark-950">
+    <div class="max-w-7xl mx-auto space-y-12">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="space-y-2">
+          <span class="text-cyan-400 font-mono text-xs sm:text-sm tracking-widest uppercase">Curated Portfolio</span>
+          <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-syne text-white tracking-tight leading-tight py-1">
+            Featured Productions
+          </h2>
+        </div>
+        
+        <div class="flex flex-wrap gap-2 text-xs font-mono">
+          <button class="filter-btn active px-4 py-2 rounded-xl bg-cyan-500 text-black font-semibold transition-all" data-filter="all">ALL</button>
+          <button class="filter-btn px-4 py-2 rounded-xl bg-dark-800 text-zinc-400 hover:text-white border border-white/5 transition-all" data-filter="motion">MOTION</button>
+          <button class="filter-btn px-4 py-2 rounded-xl bg-dark-800 text-zinc-400 hover:text-white border border-white/5 transition-all" data-filter="maya">3D & MAYA</button>
+          <button class="filter-btn px-4 py-2 rounded-xl bg-dark-800 text-zinc-400 hover:text-white border border-white/5 transition-all" data-filter="vfx">VFX & EDIT</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="projectsGrid"></div>
+    </div>
+  </section>
+
+  <!-- CORE ARSENAL & CAPABILITIES -->
+  <section id="skills" class="py-24 px-6 border-t border-white/5 relative bg-dark-900">
+    <div class="max-w-7xl mx-auto space-y-12">
+      <div class="space-y-2">
+        <span class="text-cyan-400 font-mono text-xs sm:text-sm tracking-widest uppercase">Software & Disciplines</span>
+        <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-syne text-white tracking-tight leading-tight py-1">
+          Core Arsenal & Capabilities
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        <div class="p-6 rounded-2xl bg-dark-800 border border-white/5 hover:border-cyan-500/30 transition-all flex flex-col justify-between">
+          <div>
+            <i data-lucide="layers" class="w-8 h-8 text-cyan-400 mb-4"></i>
+            <h3 class="font-syne font-bold text-lg text-white">After Effects</h3>
+            <p class="text-xs text-zinc-400 mt-2 font-mono">Kinetic typography, 2D vector animation, UI motion design, and expressions.</p>
+          </div>
+          <span class="mt-4 text-[10px] font-mono text-cyan-400/80 uppercase">Advanced Motion</span>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-dark-800 border border-white/5 hover:border-amber-500/30 transition-all flex flex-col justify-between">
+          <div>
+            <i data-lucide="palette" class="w-8 h-8 text-amber-400 mb-4"></i>
+            <h3 class="font-syne font-bold text-lg text-white">Photoshop & Illustrator</h3>
+            <p class="text-xs text-zinc-400 mt-2 font-mono">Graphic designing, vector assets, UI design, texture baking, matte painting & storyboards.</p>
+          </div>
+          <span class="mt-4 text-[10px] font-mono text-amber-400/80 uppercase">Graphic & Vector</span>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-dark-800 border border-white/5 hover:border-indigo-500/30 transition-all flex flex-col justify-between">
+          <div>
+            <i data-lucide="box" class="w-8 h-8 text-indigo-400 mb-4"></i>
+            <h3 class="font-syne font-bold text-lg text-white">Autodesk Maya</h3>
+            <p class="text-xs text-zinc-400 mt-2 font-mono">Hard-surface 3D modeling, UV unwrapping, Arnold lighting, and photoreal shaders.</p>
+          </div>
+          <span class="mt-4 text-[10px] font-mono text-indigo-400/80 uppercase">3D & Shading</span>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-dark-800 border border-white/5 hover:border-emerald-500/30 transition-all flex flex-col justify-between">
+          <div>
+            <i data-lucide="user-check" class="w-8 h-8 text-emerald-400 mb-4"></i>
+            <h3 class="font-syne font-bold text-lg text-white">Character Rigging</h3>
+            <p class="text-xs text-zinc-400 mt-2 font-mono">Bipedal IK/FK controls, facial morph targets, walk cycles, and precise weight painting.</p>
+          </div>
+          <span class="mt-4 text-[10px] font-mono text-emerald-400/80 uppercase">IK/FK & Physics</span>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-dark-800 border border-white/5 hover:border-violet-500/30 transition-all flex flex-col justify-between">
+          <div>
+            <i data-lucide="film" class="w-8 h-8 text-violet-400 mb-4"></i>
+            <h3 class="font-syne font-bold text-lg text-white">Premiere Pro & VFX</h3>
+            <p class="text-xs text-zinc-400 mt-2 font-mono">Color grading (Lumetri), rotoscoping, chroma-keying, speed ramping, and audio sync.</p>
+          </div>
+          <span class="mt-4 text-[10px] font-mono text-violet-400/80 uppercase">Cinema Edit & VFX</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5-STEP MOTION PIPELINE -->
+  <section id="pipeline" class="py-24 px-6 border-t border-white/5 relative bg-dark-950">
+    <div class="max-w-7xl mx-auto space-y-12">
+      <div class="space-y-2">
+        <span class="text-cyan-400 font-mono text-xs sm:text-sm tracking-widest uppercase">Workflow</span>
+        <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-syne text-white tracking-tight leading-tight py-1">
+          5-Step Creative Pipeline
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div class="p-6 rounded-2xl bg-dark-800 border border-white/5 space-y-3">
+          <span class="font-mono text-cyan-400 text-sm font-bold">01 / CONCEPT</span>
+          <h4 class="font-syne font-semibold text-white">Storyboard & Script</h4>
+          <p class="text-xs text-zinc-400 font-mono">Visual moodboards, Photoshop & Illustrator concept art.</p>
+        </div>
+        <div class="p-6 rounded-2xl bg-dark-800 border border-white/5 space-y-3">
+          <span class="font-mono text-cyan-400 text-sm font-bold">02 / MODEL & RIG</span>
+          <h4 class="font-syne font-semibold text-white">Maya & Skeleton</h4>
+          <p class="text-xs text-zinc-400 font-mono">Hard-surface mesh and IK/FK character rigs.</p>
+        </div>
+        <div class="p-6 rounded-2xl bg-dark-800 border border-white/5 space-y-3">
+          <span class="font-mono text-cyan-400 text-sm font-bold">03 / ANIMATE</span>
+          <h4 class="font-syne font-semibold text-white">Motion Dynamics</h4>
+          <p class="text-xs text-zinc-400 font-mono">Keyframe timing, secondary physics, walk-cycles.</p>
+        </div>
+        <div class="p-6 rounded-2xl bg-dark-800 border border-white/5 space-y-3">
+          <span class="font-mono text-cyan-400 text-sm font-bold">04 / VFX & COMP</span>
+          <h4 class="font-syne font-semibold text-white">After Effects & VFX</h4>
+          <p class="text-xs text-zinc-400 font-mono">Multi-pass lighting, motion blur, and color grading.</p>
+        </div>
+        <div class="p-6 rounded-2xl bg-dark-800 border border-white/5 space-y-3">
+          <span class="font-mono text-cyan-400 text-sm font-bold">05 / MASTER</span>
+          <h4 class="font-syne font-semibold text-white">Final 4K Delivery</h4>
+          <p class="text-xs text-zinc-400 font-mono">High-bitrate ProRes/H.264 formats with perfect audio sync.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials" class="py-24 px-6 border-t border-white/5 relative bg-dark-900">
+    <div class="max-w-7xl mx-auto space-y-12">
+      <div class="space-y-2">
+        <span class="text-cyan-400 font-mono text-xs sm:text-sm tracking-widest uppercase">Reputation</span>
+        <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-syne text-white tracking-tight leading-tight py-1">
+          Client Feedback
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-6 rounded-2xl bg-dark-800 border border-white/5 flex flex-col justify-between">
+          <p class="text-zinc-300 text-sm font-sans italic leading-relaxed">
+            "Sumit rigged our character and executed walk-cycles beyond expectations. Fluid movement and completed before deadline."
+          </p>
+          <div class="mt-6 pt-4 border-t border-white/5 flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-cyan-500/20 text-cyan-400 font-bold font-syne flex items-center justify-center">AK</div>
+            <div>
+              <h5 class="font-syne font-bold text-white text-sm">Aman Khurana</h5>
+              <p class="text-xs text-zinc-500 font-mono">Creative Director, Indie Studio</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-dark-800 border border-white/5 flex flex-col justify-between">
+          <p class="text-zinc-300 text-sm font-sans italic leading-relaxed">
+            "The 3D Maya watch commercial increased our product click-through rates by 240%. His lighting and shader setup is top tier."
+          </p>
+          <div class="mt-6 pt-4 border-t border-white/5 flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-violet-500/20 text-violet-400 font-bold font-syne flex items-center justify-center">RM</div>
+            <div>
+              <h5 class="font-syne font-bold text-white text-sm">Rohan Mehta</h5>
+              <p class="text-xs text-zinc-500 font-mono">Founder, ChronoTime</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-dark-800 border border-white/5 flex flex-col justify-between">
+          <p class="text-zinc-300 text-sm font-sans italic leading-relaxed">
+            "Lightning-fast turnaround on After Effects motion design. Sumit understands pacing and sound sync effortlessly."
+          </p>
+          <div class="mt-6 pt-4 border-t border-white/5 flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 font-bold font-syne flex items-center justify-center">SP</div>
+            <div>
+              <h5 class="font-syne font-bold text-white text-sm">Sarah Patel</h5>
+              <p class="text-xs text-zinc-500 font-mono">Head of Marketing, Apex Media</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT SECTION (DYNAMIC WHATSAPP & EMAIL LINK SUPPORT) -->
+  <section id="contact" class="py-24 px-6 border-t border-white/5 relative bg-dark-950">
+    <div class="max-w-4xl mx-auto space-y-12">
+      <div class="text-center space-y-3">
+        <span class="text-cyan-400 font-mono text-xs sm:text-sm tracking-widest uppercase">Direct Inquiry</span>
+        <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-syne text-white tracking-tight leading-tight py-2">
+          Let's Create Something Iconic
+        </h2>
+        <p class="text-zinc-400 text-sm sm:text-base max-w-xl mx-auto pt-1">
+          Looking for custom character rigging, graphic designing, 3D Maya production, or high-octane commercial edits? Send details below.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+        <div class="md:col-span-5 space-y-4">
+          <div class="p-6 rounded-2xl bg-dark-800 border border-white/5 space-y-4">
+            
+            <div class="flex items-center space-x-4 pb-2 border-b border-white/5">
+              <div class="w-14 h-14 rounded-2xl overflow-hidden border border-cyan-400/40 bg-dark-900 flex-shrink-0">
+                <img id="contactAvatarImg" src="profile.png" alt="Sumit Walia" class="w-full h-full object-cover object-top block" />
+              </div>
+              <div>
+                <h4 class="font-syne font-bold text-white text-base">Sumit Walia</h4>
+                <p class="text-xs font-mono text-cyan-400">Lead Visual Artist</p>
+              </div>
+            </div>
+            
+            <!-- Dynamic WhatsApp Link -->
+            <a id="liveWhatsAppLink" href="https://wa.me/919999999999?text=Hi%20Sumit,%20I%20saw%20your%20portfolio" target="_blank" class="flex items-center space-x-3 text-sm text-zinc-300 hover:text-emerald-400 transition-colors p-3 rounded-xl bg-white/5">
+              <i data-lucide="message-square" class="w-5 h-5 text-emerald-400 flex-shrink-0"></i>
+              <div class="truncate">
+                <p class="font-medium text-xs text-white">WhatsApp Direct Chat</p>
+                <p id="liveWhatsAppText" class="text-[11px] font-mono text-zinc-400">+91 99999 99999</p>
+              </div>
+            </a>
+
+            <!-- Dynamic Email Link -->
+            <a id="liveEmailLink" href="mailto:sumitwalia.motion@gmail.com" class="flex items-center space-x-3 text-sm text-zinc-300 hover:text-cyan-400 transition-colors p-3 rounded-xl bg-white/5">
+              <i data-lucide="mail" class="w-5 h-5 text-cyan-400 flex-shrink-0"></i>
+              <div class="truncate">
+                <p class="font-medium text-xs text-white">Direct Email</p>
+                <p id="liveEmailText" class="text-[11px] font-mono text-zinc-400 truncate">sumitwalia.motion@gmail.com</p>
+              </div>
+            </a>
+
+            <div class="pt-2 text-xs font-mono text-zinc-500">
+              <p>📍 Available for Global Remote Work</p>
+              <p class="mt-1">⚡ Typical Response: &lt; 2 Hours</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="md:col-span-7">
+          <form id="contactForm" class="p-6 sm:p-8 rounded-2xl bg-dark-800 border border-white/5 space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-mono text-zinc-400 mb-1">YOUR NAME</label>
+                <input type="text" required placeholder="John Doe" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white text-sm focus:border-cyan-400 focus:outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-mono text-zinc-400 mb-1">EMAIL ADDRESS</label>
+                <input type="email" required placeholder="john@example.com" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white text-sm focus:border-cyan-400 focus:outline-none" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-mono text-zinc-400 mb-1">PROJECT TYPE</label>
+              <select class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white text-sm focus:border-cyan-400 focus:outline-none">
+                <option>Graphic Designing (Photoshop & Illustrator)</option>
+                <option>Character Rigging & Animation</option>
+                <option>Autodesk Maya 3D Modeling / Commercial</option>
+                <option>After Effects Motion Graphics</option>
+                <option>Premiere Pro Editing & VFX</option>
+                <option>Full Creative Pipeline / Showreel</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-mono text-zinc-400 mb-1">PROJECT DETAILS</label>
+              <textarea rows="4" required placeholder="Briefly describe your vision, deadlines, and deliverables..." class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white text-sm focus:border-cyan-400 focus:outline-none"></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-3.5 rounded-xl font-mono text-xs font-bold bg-cyan-400 text-black hover:bg-cyan-300 transition-all shadow-lg shadow-cyan-400/20">
+              SEND PROJECT BRIEF
+            </button>
+            <p id="formStatus" class="text-xs font-mono text-emerald-400 text-center hidden">Message logged successfully! Sumit will reach out shortly.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-8 border-t border-white/5 text-center text-xs font-mono text-zinc-500 flex flex-col sm:flex-row items-center justify-between max-w-7xl mx-auto px-6 gap-4">
+    <p>© 2026 Sumit Walia. All rights reserved. Motion Graphics • Maya 3D • Rigging • VFX</p>
+    <button onclick="openAuthModal()" class="text-zinc-500 hover:text-cyan-400 transition-colors flex items-center space-x-1">
+      <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+      <span>Creator CMS / Owner Login</span>
+    </button>
+  </footer>
+
+  <!-- AUTH LOGIN MODAL -->
+  <div id="authModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="relative w-full max-w-md bg-dark-900 border border-cyan-500/40 rounded-3xl p-8 space-y-6 glow-cyan">
+      <button onclick="closeAuthModal()" class="absolute top-6 right-6 p-2 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <div class="text-center space-y-2">
+        <div class="w-12 h-12 mx-auto rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+          <i data-lucide="shield-alert" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-2xl font-bold font-syne text-white">Owner Portal</h3>
+        <p class="text-xs font-mono text-zinc-400">Login to manage your portfolio, upload media & reels</p>
+      </div>
+
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label class="block text-xs font-mono text-zinc-400 mb-1">USERNAME</label>
+          <input type="text" id="adminUser" required placeholder="sumit" class="w-full px-4 py-3 rounded-xl bg-dark-800 border border-white/10 text-white text-sm focus:border-cyan-400 focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-xs font-mono text-zinc-400 mb-1">PASSWORD</label>
+          <div class="relative">
+            <input type="password" id="adminPass" required placeholder="••••••••" class="w-full px-4 py-3 pr-10 rounded-xl bg-dark-800 border border-white/10 text-white text-sm focus:border-cyan-400 focus:outline-none" />
+            <button type="button" onclick="togglePasswordVisibility('adminPass', 'toggleLoginEye')" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white">
+              <i data-lucide="eye" id="toggleLoginEye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+        
+        <p id="loginErrorMsg" class="text-xs font-mono text-rose-400 hidden text-center">Invalid username or password.</p>
+
+        <button type="submit" class="w-full py-3.5 rounded-xl font-mono text-xs font-bold bg-cyan-400 text-black hover:bg-cyan-300 transition-all shadow-lg shadow-cyan-400/20">
+          LOGIN TO DASHBOARD
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FULL OWNER CMS DASHBOARD -->
+  <div id="dashboardModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-6 hidden">
+    <div class="relative w-full max-w-5xl bg-dark-900 border border-cyan-500/40 rounded-3xl overflow-hidden p-6 sm:p-8 space-y-8 max-h-[92vh] overflow-y-auto custom-scrollbar">
+      
+      <div class="flex items-center justify-between pb-6 border-b border-white/10">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+            <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold font-syne text-white">Creator Studio CMS</h2>
+            <p class="text-xs font-mono text-zinc-400">Sumit Walia Portfolio Manager</p>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <button onclick="handleLogout()" class="px-4 py-2 rounded-xl text-xs font-mono border border-rose-500/40 bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white transition-all">
+            Logout
+          </button>
+          <button onclick="closeDashboardModal()" class="p-2.5 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- CMS Card 1: Change Profile Photo -->
+        <div class="p-6 rounded-2xl bg-dark-800 border border-white/10 space-y-4">
+          <div class="flex items-center space-x-2 text-cyan-400">
+            <i data-lucide="image" class="w-5 h-5"></i>
+            <h3 class="font-syne font-bold text-white text-lg">Profile Picture Manager</h3>
+          </div>
+          <p class="text-xs font-mono text-zinc-400">Upload your latest portrait. It will instantly sync across navbar, hero badge and contact card.</p>
+          
+          <div class="flex items-center space-x-4 pt-2">
+            <div class="w-20 h-20 rounded-2xl overflow-hidden border border-cyan-400/50 bg-black flex-shrink-0">
+              <img id="dashboardAvatarPreview" src="profile.png" alt="Preview" class="w-full h-full object-cover object-top" />
+            </div>
+            <div class="flex-1">
+              <input type="file" id="cmsProfileUpload" accept="image/*" class="block w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-mono file:font-semibold file:bg-cyan-500 file:text-black hover:file:bg-cyan-400 cursor-pointer" />
+            </div>
+          </div>
+          <p id="profileUploadSuccess" class="text-xs font-mono text-emerald-400 hidden">✓ Profile photo updated and saved!</p>
+        </div>
+
+        <!-- CMS Card 2: Change Hero Viewport Video -->
+        <div class="p-6 rounded-2xl bg-dark-800 border border-white/10 space-y-4">
+          <div class="flex items-center space-x-2 text-indigo-400">
+            <i data-lucide="video" class="w-5 h-5"></i>
+            <h3 class="font-syne font-bold text-white text-lg">Hero Showreel / Video</h3>
+          </div>
+          <p class="text-xs font-mono text-zinc-400">Upload a new walk-cycle, Maya 3D reel, or commercial clip to replace the hero video.</p>
+          
+          <div class="pt-2">
+            <input type="file" id="cmsVideoUpload" accept="video/*" class="block w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-mono file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-400 cursor-pointer" />
+          </div>
+          <p id="videoUploadSuccess" class="text-xs font-mono text-emerald-400 hidden">✓ Hero showreel video updated and playing!</p>
+        </div>
+      </div>
+
+      <!-- CMS Section: NEW - CONTACT INFO & SOCIAL LINKS MANAGER -->
+      <div class="p-6 sm:p-8 rounded-2xl bg-dark-800 border border-emerald-500/20 space-y-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2 text-emerald-400">
+            <i data-lucide="phone-call" class="w-5 h-5"></i>
+            <h3 class="font-syne font-bold text-white text-lg">Direct Contact & Social Link Manager</h3>
+          </div>
+          <span class="text-xs font-mono text-zinc-400">Instant Website Sync</span>
+        </div>
+        <p class="text-xs font-mono text-zinc-400">Update your official WhatsApp number and contact email. All direct links on the website will update immediately.</p>
+
+        <form id="contactSettingsForm" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-mono text-zinc-400 mb-1">WHATSAPP NUMBER (WITH COUNTRY CODE)</label>
+              <div class="relative">
+                <input type="text" id="cmsWhatsAppInput" required placeholder="e.g. 919999999999" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white text-sm focus:border-emerald-400 focus:outline-none" />
+              </div>
+              <p class="text-[10px] font-mono text-zinc-500 mt-1">Example: 919876543210 (Bina '+' ya spaces ke)</p>
+            </div>
+
+            <div>
+              <label class="block text-xs font-mono text-zinc-400 mb-1">OFFICIAL EMAIL ID</label>
+              <input type="email" id="cmsEmailInput" required placeholder="sumitwalia.motion@gmail.com" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white text-sm focus:border-emerald-400 focus:outline-none" />
+              <p class="text-[10px] font-mono text-zinc-500 mt-1">Clients can click to directly mail you</p>
+            </div>
+          </div>
+
+          <div class="pt-2 flex items-center justify-between">
+            <button type="submit" class="px-6 py-3 rounded-xl font-mono text-xs font-bold bg-emerald-400 text-black hover:bg-emerald-300 transition-all shadow-lg shadow-emerald-400/20">
+              SAVE CONTACT DETAILS
+            </button>
+            <p id="contactSettingsSuccess" class="text-xs font-mono text-emerald-400 hidden">✓ WhatsApp & Email updated successfully!</p>
+          </div>
+        </form>
+      </div>
+
+      <!-- CMS Section: Add New Project -->
+      <div class="p-6 sm:p-8 rounded-2xl bg-dark-800 border border-white/10 space-y-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2 text-cyan-400">
+            <i data-lucide="plus-circle" class="w-5 h-5"></i>
+            <h3 class="font-syne font-bold text-white text-lg">Add New Project / Reel to Portfolio</h3>
+          </div>
+          <span class="text-xs font-mono text-zinc-400">Instant Live Publish</span>
+        </div>
+
+        <form id="newProjectForm" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-mono text-zinc-400 mb-1">PROJECT TITLE</label>
+              <input type="text" id="projTitle" required placeholder="e.g. Hologram VFX Commercial" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white text-sm focus:border-cyan-400 focus:outline-none" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-mono text-zinc-400 mb-1">CATEGORY</label>
+              <select id="projCategory" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white text-sm focus:border-cyan-400 focus:outline-none">
+                <option value="maya">3D & Autodesk Maya</option>
+                <option value="motion">After Effects Motion Graphics</option>
+                <option value="vfx">Premiere Pro, VFX & Edit</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-mono text-zinc-400 mb-1">SOFTWARE USED</label>
+              <input type="text" id="projSoftware" required placeholder="Maya, After Effects, Photoshop" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white text-sm focus:border-cyan-400 focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-zinc-400 mb-1">TIMELINE</label>
+              <input type="text" id="projTimeline" required placeholder="e.g. 4 Days" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white text-sm focus:border-cyan-400 focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-zinc-400 mb-1">RESOLUTION</label>
+              <input type="text" id="projResolution" required placeholder="e.g. 4K 60FPS" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white text-sm focus:border-cyan-400 focus:outline-none" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-mono text-zinc-400 mb-1">PROJECT DESCRIPTION</label>
+            <textarea id="projDesc" rows="3" required placeholder="Brief breakdown of the concept, rigging, animation and final composite..." class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white text-sm focus:border-cyan-400 focus:outline-none"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-mono text-zinc-400 mb-1">UPLOAD PROJECT MEDIA (IMAGE OR VIDEO REEL)</label>
+            <input type="file" id="projMediaFile" accept="image/*,video/*" class="block w-full text-xs text-zinc-400 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-mono file:font-semibold file:bg-cyan-500 file:text-black hover:file:bg-cyan-400 cursor-pointer" />
+          </div>
+
+          <div class="flex items-center justify-between pt-2">
+            <button type="submit" class="px-6 py-3 rounded-xl font-mono text-xs font-bold bg-cyan-400 text-black hover:bg-cyan-300 transition-all shadow-lg shadow-cyan-400/20">
+              PUBLISH PROJECT TO PORTFOLIO
+            </button>
+            <button type="button" onclick="resetDefaultPortfolio()" class="text-xs font-mono text-zinc-500 hover:text-rose-400 transition-colors">
+              Reset Projects to Default
+            </button>
+          </div>
+          <p id="projAddSuccess" class="text-xs font-mono text-emerald-400 hidden">✓ New project added to the Featured Productions grid!</p>
+        </form>
+      </div>
+
+      <!-- CMS Section: ADMIN CREDENTIALS & SECURITY MANAGER -->
+      <div class="p-6 sm:p-8 rounded-2xl bg-dark-800 border border-amber-500/20 space-y-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2 text-amber-400">
+            <i data-lucide="key-round" class="w-5 h-5"></i>
+            <h3 class="font-syne font-bold text-white text-lg">Admin Security & Credentials Manager</h3>
+          </div>
+          <span class="text-xs font-mono text-zinc-400">Update Login Info</span>
+        </div>
+        <p class="text-xs font-mono text-zinc-400">Change your dashboard username or password at any time. Changes take effect immediately.</p>
+
+        <form id="credentialsForm" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-mono text-zinc-400 mb-1">NEW USERNAME</label>
+              <input type="text" id="newAdminUser" required placeholder="sumit" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white text-sm focus:border-amber-400 focus:outline-none" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-mono text-zinc-400 mb-1">CURRENT PASSWORD</label>
+              <div class="relative">
+                <input type="password" id="currAdminPass" required placeholder="••••••••" class="w-full px-4 py-3 pr-10 rounded-xl bg-dark-900 border border-white/10 text-white text-sm focus:border-amber-400 focus:outline-none" />
+                <button type="button" onclick="togglePasswordVisibility('currAdminPass', 'toggleCurrEye')" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white">
+                  <i data-lucide="eye" id="toggleCurrEye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-mono text-zinc-400 mb-1">NEW PASSWORD</label>
+              <div class="relative">
+                <input type="password" id="newAdminPass" required placeholder="New password" class="w-full px-4 py-3 pr-10 rounded-xl bg-dark-900 border border-white/10 text-white text-sm focus:border-amber-400 focus:outline-none" />
+                <button type="button" onclick="togglePasswordVisibility('newAdminPass', 'toggleNewEye')" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white">
+                  <i data-lucide="eye" id="toggleNewEye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <p id="credErrorMsg" class="text-xs font-mono text-rose-400 hidden">Current password entered is incorrect.</p>
+          <p id="credSuccessMsg" class="text-xs font-mono text-emerald-400 hidden">✓ Login credentials updated successfully!</p>
+
+          <div class="pt-1 flex items-center justify-between">
+            <button type="submit" class="px-6 py-3 rounded-xl font-mono text-xs font-bold bg-amber-400 text-black hover:bg-amber-300 transition-all shadow-lg shadow-amber-400/20">
+              UPDATE LOGIN ACCESS
+            </button>
+            <button type="button" onclick="resetDefaultCredentials()" class="text-xs font-mono text-zinc-500 hover:text-amber-400 transition-colors">
+              Reset to Default (sumit / admin123)
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FULLSCREEN LIGHTBOX MODAL -->
+  <div id="projectModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6 hidden">
+    <div class="relative w-full max-w-4xl bg-dark-900 border border-cyan-500/30 rounded-3xl overflow-hidden p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <button onclick="closeModal()" class="absolute top-6 right-6 p-2 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div id="modalVisualContainer" class="aspect-video rounded-2xl bg-black border border-white/10 flex items-center justify-center relative overflow-hidden">
+        <div id="modalVisualContent" class="w-full h-full flex items-center justify-center text-cyan-400"></div>
+      </div>
+
+      <div class="space-y-3">
+        <span id="modalCategory" class="text-xs font-mono text-cyan-400 uppercase tracking-widest"></span>
+        <h3 id="modalTitle" class="text-2xl sm:text-3xl font-extrabold font-syne text-white"></h3>
+        <p id="modalDesc" class="text-sm font-sans text-zinc-300 leading-relaxed"></p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-white/5">
+        <div>
+          <span class="text-[10px] font-mono text-zinc-500 uppercase">SOFTWARE</span>
+          <p id="modalSoftware" class="font-mono text-xs text-white font-semibold mt-0.5"></p>
+        </div>
+        <div>
+          <span class="text-[10px] font-mono text-zinc-500 uppercase">TIMELINE</span>
+          <p id="modalTimeline" class="font-mono text-xs text-white font-semibold mt-0.5"></p>
+        </div>
+        <div>
+          <span class="text-[10px] font-mono text-zinc-500 uppercase">RESOLUTION</span>
+          <p id="modalResolution" class="font-mono text-xs text-white font-semibold mt-0.5"></p>
+        </div>
+        <div>
+          <span class="text-[10px] font-mono text-zinc-500 uppercase">DELIVERABLE</span>
+          <p id="modalDeliverable" class="font-mono text-xs text-white font-semibold mt-0.5"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    // ==========================================
+    // CONTACT DETAILS STATE (WHATSAPP & EMAIL)
+    // ==========================================
+    function getStoredContactDetails() {
+      const stored = localStorage.getItem('sumit_contact_details');
+      if (stored) {
+        try { return JSON.parse(stored); } catch (e) {}
+      }
+      return {
+        whatsapp: "919999999999",
+        email: "sumitwalia.motion@gmail.com"
+      };
+    }
+
+    function applyContactDetails() {
+      const details = getStoredContactDetails();
+      const cleanPhone = details.whatsapp.replace(/[^0-9]/g, '');
+
+      // Update WhatsApp Links & Text
+      const waLink = document.getElementById('liveWhatsAppLink');
+      const waText = document.getElementById('liveWhatsAppText');
+      if (waLink) waLink.href = `https://wa.me/${cleanPhone}?text=Hi%20Sumit,%20I%20saw%20your%20portfolio`;
+      if (waText) waText.textContent = `+${cleanPhone}`;
+
+      // Update Email Links & Text
+      const emailLink = document.getElementById('liveEmailLink');
+      const emailText = document.getElementById('liveEmailText');
+      if (emailLink) emailLink.href = `mailto:${details.email}`;
+      if (emailText) emailText.textContent = details.email;
+
+      // Populate in CMS inputs
+      const cmsWa = document.getElementById('cmsWhatsAppInput');
+      const cmsEm = document.getElementById('cmsEmailInput');
+      if (cmsWa) cmsWa.value = cleanPhone;
+      if (cmsEm) cmsEm.value = details.email;
+    }
+    applyContactDetails();
+
+    // Contact Settings Form Handler
+    document.getElementById('contactSettingsForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const whatsapp = document.getElementById('cmsWhatsAppInput').value.trim();
+      const email = document.getElementById('cmsEmailInput').value.trim();
+
+      localStorage.setItem('sumit_contact_details', JSON.stringify({ whatsapp, email }));
+      applyContactDetails();
+
+      const succ = document.getElementById('contactSettingsSuccess');
+      succ.classList.remove('hidden');
+      setTimeout(() => succ.classList.add('hidden'), 3500);
+    });
+
+    // ==========================================
+    // AUTHENTICATION CREDENTIALS STATE
+    // ==========================================
+    function getStoredCredentials() {
+      const stored = localStorage.getItem('sumit_admin_creds');
+      if (stored) {
+        try { return JSON.parse(stored); } catch (e) {}
+      }
+      return { user: 'sumit', pass: 'admin123' };
+    }
+
+    function saveCredentials(user, pass) {
+      localStorage.setItem('sumit_admin_creds', JSON.stringify({ user, pass }));
+    }
+
+    function togglePasswordVisibility(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        input.type = 'password';
+        icon.setAttribute('data-lucide', 'eye');
+      }
+      lucide.createIcons();
+    }
+
+    // Portfolio Database
+    const initialProjects = [
+      {
+        id: "proj_1",
+        title: "Diego Character Rig & Walk Cycle",
+        category: "maya",
+        categoryLabel: "Rigging & Maya",
+        icon: "user-check",
+        desc: "Complete biped character rigging executed with precise bone hierarchy, IK/FK blending on limbs, facial morph targets, and a physics-grounded natural walk cycle.",
+        software: "Maya, AE, Duik",
+        timeline: "5 Days",
+        resolution: "4K 60FPS",
+        deliverable: "Rig + Video Asset",
+        media: null
+      },
+      {
+        id: "proj_2",
+        title: "Kinetic Brand Commercial",
+        category: "motion",
+        categoryLabel: "After Effects",
+        icon: "layers",
+        desc: "High-paced vector motion design emphasizing bold kinetic typography, seamless camera zooming, and musical waveform beat-syncing.",
+        software: "After Effects, Illustrator",
+        timeline: "4 Days",
+        resolution: "4K 30FPS",
+        deliverable: "Social Ad Package",
+        media: null
+      },
+      {
+        id: "proj_3",
+        title: "Sci-Fi Compositing Reel",
+        category: "vfx",
+        categoryLabel: "Premiere Pro & VFX",
+        icon: "film",
+        desc: "Multi-layered live-action integration with CG holograms, rotoscoping, screen replacements, and cinematic film-grain color grading in Lumetri.",
+        software: "Premiere Pro, AE, Mocha",
+        timeline: "1 Week",
+        resolution: "4K Cinema DCI",
+        deliverable: "Master Cut",
+        media: null
+      },
+      {
+        id: "proj_4",
+        title: "Cyberpunk Hard-Surface Prop",
+        category: "maya",
+        categoryLabel: "Maya & Arnold",
+        icon: "box",
+        desc: "Complex hard-surface subdivision modeling with UDIM UV unwrap, procedural metal weathering in Arnold, and studio turn-around render passes.",
+        software: "Autodesk Maya, Arnold",
+        timeline: "6 Days",
+        resolution: "4K Render Passes",
+        deliverable: "3D Asset + Turntable",
+        media: null
+      },
+      {
+        id: "proj_5",
+        title: "Chronos Luxury Watch Commercial",
+        category: "maya",
+        categoryLabel: "Maya Commercial",
+        icon: "watch",
+        desc: "Exploded 3D view of mechanical gears with depth of field, caustics, and macro camera movements demonstrating high-precision luxury engineering.",
+        software: "Maya, Arnold, Premiere",
+        timeline: "10 Days",
+        resolution: "4K 60FPS",
+        deliverable: "30s Commercial Reel",
+        media: null
+      },
+      {
+        id: "proj_6",
+        title: "Apex Energy Promo Edit",
+        category: "vfx",
+        categoryLabel: "VFX & Speed Ramping",
+        icon: "zap",
+        desc: "High-octane sports editing featuring dynamic time remapping, custom sound design impacts, whip pans, and energy burst VFX elements.",
+        software: "Premiere Pro, After Effects",
+        timeline: "3 Days",
+        resolution: "4K 60FPS",
+        deliverable: "Teaser + Story Cuts",
+        media: null
+      }
+    ];
+
+    let projects = JSON.parse(localStorage.getItem('sumit_portfolio_projects')) || initialProjects;
+
+    function loadSavedMedia() {
+      const savedAvatar = localStorage.getItem('sumit_profile_avatar');
+      if (savedAvatar) {
+        document.getElementById('navAvatarImg').src = savedAvatar;
+        document.getElementById('heroAvatarImg').src = savedAvatar;
+        document.getElementById('contactAvatarImg').src = savedAvatar;
+        document.getElementById('dashboardAvatarPreview').src = savedAvatar;
+      }
+      const savedVideo = localStorage.getItem('sumit_hero_video');
+      if (savedVideo) {
+        document.getElementById('mainShowreelVideo').src = savedVideo;
+      }
+    }
+    loadSavedMedia();
+
+    function renderProjects(filter = 'all') {
+      const grid = document.getElementById('projectsGrid');
+      grid.innerHTML = '';
+
+      projects.forEach((p, index) => {
+        if (filter !== 'all' && p.category !== filter) return;
+
+        const card = document.createElement('div');
+        card.className = "project-card group relative rounded-2xl bg-dark-800 border border-white/5 overflow-hidden hover:border-cyan-500/40 transition-all cursor-pointer";
+        card.setAttribute('data-category', p.category);
+        card.onclick = () => openModal(index);
+
+        let previewHTML = '';
+        if (p.media && p.media.type.startsWith('video/')) {
+          previewHTML = `<video src="${p.media.data}" class="w-full h-full object-cover" muted loop autoplay playsinline></video>`;
+        } else if (p.media && p.media.type.startsWith('image/')) {
+          previewHTML = `<img src="${p.media.data}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />`;
+        } else {
+          previewHTML = `
+            <div class="aspect-video bg-gradient-to-tr from-cyan-950/40 to-dark-800 flex items-center justify-center relative overflow-hidden">
+              <i data-lucide="${p.icon || 'play-circle'}" class="w-12 h-12 text-cyan-400 group-hover:scale-110 transition-transform"></i>
+              <div class="absolute inset-0 bg-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span class="px-4 py-2 rounded-full bg-black/80 font-mono text-xs text-cyan-400 border border-cyan-500/30">VIEW BREAKDOWN</span>
+              </div>
+            </div>`;
+        }
+
+        card.innerHTML = `
+          <div class="aspect-video overflow-hidden bg-black flex items-center justify-center relative">
+            ${previewHTML}
+          </div>
+          <div class="p-6">
+            <span class="text-[11px] font-mono text-cyan-400 uppercase tracking-wider">${p.categoryLabel || p.category}</span>
+            <h3 class="font-syne font-bold text-lg text-white mt-1 group-hover:text-cyan-400 transition-colors">${p.title}</h3>
+            <p class="text-xs text-zinc-400 mt-2 font-mono line-clamp-2">${p.desc}</p>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+    renderProjects();
+
+    // AUTH & DASHBOARD LOGIC
+    const authModal = document.getElementById('authModal');
+    const dashboardModal = document.getElementById('dashboardModal');
+    let isLoggedIn = sessionStorage.getItem('sumit_admin_logged') === 'true';
+
+    function openAuthModal() {
+      if (isLoggedIn) {
+        dashboardModal.classList.remove('hidden');
+        populateCredsInputs();
+        applyContactDetails();
+      } else {
+        authModal.classList.remove('hidden');
+      }
+    }
+
+    function closeAuthModal() {
+      authModal.classList.add('hidden');
+      document.getElementById('loginErrorMsg').classList.add('hidden');
+    }
+
+    function closeDashboardModal() {
+      dashboardModal.classList.add('hidden');
+    }
+
+    function populateCredsInputs() {
+      const creds = getStoredCredentials();
+      document.getElementById('newAdminUser').value = creds.user;
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const user = document.getElementById('adminUser').value.trim();
+      const pass = document.getElementById('adminPass').value.trim();
+      const currentCreds = getStoredCredentials();
+
+      if (user === currentCreds.user && pass === currentCreds.pass) {
+        isLoggedIn = true;
+        sessionStorage.setItem('sumit_admin_logged', 'true');
+        closeAuthModal();
+        dashboardModal.classList.remove('hidden');
+        populateCredsInputs();
+        applyContactDetails();
+      } else {
+        document.getElementById('loginErrorMsg').classList.remove('hidden');
+      }
+    });
+
+    function handleLogout() {
+      isLoggedIn = false;
+      sessionStorage.removeItem('sumit_admin_logged');
+      closeDashboardModal();
+    }
+
+    // Credentials Update Handler
+    document.getElementById('credentialsForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newUser = document.getElementById('newAdminUser').value.trim();
+      const currPass = document.getElementById('currAdminPass').value.trim();
+      const newPass = document.getElementById('newAdminPass').value.trim();
+      const currentCreds = getStoredCredentials();
+
+      const errEl = document.getElementById('credErrorMsg');
+      const succEl = document.getElementById('credSuccessMsg');
+
+      if (currPass !== currentCreds.pass) {
+        errEl.classList.remove('hidden');
+        succEl.classList.add('hidden');
+        return;
+      }
+
+      errEl.classList.add('hidden');
+      saveCredentials(newUser, newPass);
+      succEl.classList.remove('hidden');
+      document.getElementById('currAdminPass').value = '';
+      document.getElementById('newAdminPass').value = '';
+
+      setTimeout(() => {
+        succEl.classList.add('hidden');
+      }, 4000);
+    });
+
+    function resetDefaultCredentials() {
+      if (confirm("Reset login credentials back to default (user: sumit, pass: admin123)?")) {
+        localStorage.removeItem('sumit_admin_creds');
+        populateCredsInputs();
+        alert("Credentials reset to sumit / admin123");
+      }
+    }
+
+    // Profile Picture Upload
+    document.getElementById('cmsProfileUpload').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const dataURL = evt.target.result;
+          localStorage.setItem('sumit_profile_avatar', dataURL);
+          loadSavedMedia();
+          const s = document.getElementById('profileUploadSuccess');
+          s.classList.remove('hidden');
+          setTimeout(() => s.classList.add('hidden'), 3000);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Hero Video Upload
+    document.getElementById('cmsVideoUpload').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const videoURL = URL.createObjectURL(file);
+        document.getElementById('mainShowreelVideo').src = videoURL;
+        document.getElementById('mainShowreelVideo').play();
+        const s = document.getElementById('videoUploadSuccess');
+        s.classList.remove('hidden');
+        setTimeout(() => s.classList.add('hidden'), 3000);
+      }
+    });
+
+    // Add Project Handler
+    document.getElementById('newProjectForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('projTitle').value.trim();
+      const category = document.getElementById('projCategory').value;
+      const software = document.getElementById('projSoftware').value.trim();
+      const timeline = document.getElementById('projTimeline').value.trim();
+      const resolution = document.getElementById('projResolution').value.trim();
+      const desc = document.getElementById('projDesc').value.trim();
+      const mediaFile = document.getElementById('projMediaFile').files[0];
+
+      let categoryLabel = "Motion Design";
+      if (category === 'maya') categoryLabel = "Maya 3D & Rigging";
+      if (category === 'vfx') categoryLabel = "VFX & Compositing";
+
+      function saveAndPublish(mediaObj = null) {
+        const newProj = {
+          id: 'proj_' + Date.now(),
+          title,
+          category,
+          categoryLabel,
+          icon: category === 'maya' ? 'box' : (category === 'vfx' ? 'film' : 'layers'),
+          desc,
+          software,
+          timeline,
+          resolution,
+          deliverable: "Custom Package",
+          media: mediaObj
+        };
+
+        projects.unshift(newProj);
+        localStorage.setItem('sumit_portfolio_projects', JSON.stringify(projects));
+        renderProjects();
+        document.getElementById('newProjectForm').reset();
+        const s = document.getElementById('projAddSuccess');
+        s.classList.remove('hidden');
+        setTimeout(() => s.classList.add('hidden'), 4000);
+      }
+
+      if (mediaFile) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          saveAndPublish({ type: mediaFile.type, data: evt.target.result });
+        };
+        reader.readAsDataURL(mediaFile);
+      } else {
+        saveAndPublish(null);
+      }
+    });
+
+    function resetDefaultPortfolio() {
+      if (confirm("Reset projects back to default showcase?")) {
+        projects = initialProjects;
+        localStorage.removeItem('sumit_portfolio_projects');
+        renderProjects();
+      }
+    }
+
+    // Filter Buttons
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        playTone();
+        filterBtns.forEach(b => {
+          b.classList.remove('bg-cyan-500', 'text-black');
+          b.classList.add('bg-dark-800', 'text-zinc-400');
+        });
+        btn.classList.add('bg-cyan-500', 'text-black');
+        btn.classList.remove('bg-dark-800', 'text-zinc-400');
+
+        const filter = btn.getAttribute('data-filter');
+        renderProjects(filter);
+      });
+    });
+
+    // Lightbox Modal
+    const modal = document.getElementById("projectModal");
+    function openModal(index) {
+      playTone();
+      const p = projects[index];
+      document.getElementById("modalTitle").textContent = p.title;
+      document.getElementById("modalCategory").textContent = p.categoryLabel || p.category;
+      document.getElementById("modalDesc").textContent = p.desc;
+      document.getElementById("modalSoftware").textContent = p.software;
+      document.getElementById("modalTimeline").textContent = p.timeline;
+      document.getElementById("modalResolution").textContent = p.resolution;
+      document.getElementById("modalDeliverable").textContent = p.deliverable || "Custom Deliverable";
+      
+      const visualContainer = document.getElementById("modalVisualContent");
+      if (p.media && p.media.type.startsWith('video/')) {
+        visualContainer.innerHTML = `<video src="${p.media.data}" class="w-full h-full object-contain" controls autoplay></video>`;
+      } else if (p.media && p.media.type.startsWith('image/')) {
+        visualContainer.innerHTML = `<img src="${p.media.data}" class="w-full h-full object-contain" />`;
+      } else {
+        visualContainer.innerHTML = `<i data-lucide="play-circle" class="w-16 h-16"></i>`;
+      }
+      lucide.createIcons();
+      modal.classList.remove("hidden");
+    }
+
+    function closeModal() {
+      modal.classList.add("hidden");
+    }
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Typewriter
+    const roles = [
+      "After Effects Specialist",
+      "Character Rigging & Walk Cycles",
+      "Autodesk Maya 3D Modeler",
+      "Photoshop & Illustrator Designer",
+      "Premiere Pro Cinema Editor",
+      "VFX Compositor"
+    ];
+    let roleIndex = 0, charIndex = 0, isDeleting = false;
+    const typewriterEl = document.getElementById("typewriterText");
+
+    function typeEffect() {
+      const currentRole = roles[roleIndex];
+      if (isDeleting) {
+        typewriterEl.textContent = currentRole.substring(0, charIndex - 1);
+        charIndex--;
+      } else {
+        typewriterEl.textContent = currentRole.substring(0, charIndex + 1);
+        charIndex++;
+      }
+
+      let speed = isDeleting ? 30 : 70;
+      if (!isDeleting && charIndex === currentRole.length) {
+        speed = 1800;
+        isDeleting = true;
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        roleIndex = (roleIndex + 1) % roles.length;
+        speed = 400;
+      }
+      setTimeout(typeEffect, speed);
+    }
+    typeEffect();
+
+    // Canvas Background
+    const canvas = document.getElementById("kineticCanvas");
+    const ctx = canvas.getContext("2d");
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener("resize", () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const particles = Array.from({ length: 45 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: (Math.random() - 0.5) * 0.8,
+      size: Math.random() * 2 + 1
+    }));
+
+    function drawCanvas() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "rgba(6, 182, 212, 0.4)";
+      ctx.strokeStyle = "rgba(6, 182, 212, 0.08)";
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+          if (dist < 130) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(drawCanvas);
+    }
+    drawCanvas();
+
+    // Audio FX
+    let audioEnabled = false;
+    let synth;
+
+    document.getElementById("audioToggleBtn").addEventListener("click", async () => {
+      if (!audioEnabled) {
+        await Tone.start();
+        synth = new Tone.MembraneSynth().toDestination();
+        audioEnabled = true;
+        document.getElementById("audioIcon").classList.add("text-cyan-400");
+        playTone();
+      } else {
+        audioEnabled = false;
+        document.getElementById("audioIcon").classList.remove("text-cyan-400");
+      }
+    });
+
+    function playTone() {
+      if (audioEnabled && synth) {
+        synth.triggerAttackRelease("C3", "16n", undefined, 0.2);
+      }
+    }
+
+    // Contact Form
+    document.getElementById("contactForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      playTone();
+      document.getElementById("formStatus").classList.remove("hidden");
+      e.target.reset();
+    });
+  </script>
+</body>
+</html>
