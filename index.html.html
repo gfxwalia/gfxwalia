@@ -1100,7 +1100,18 @@
         const reader = new FileReader();
         reader.onload = function(evt) {
           const dataURL = evt.target.result;
-          localStorage.setItem('sumit_profile_avatar', dataURL);
+         try {
+  localStorage.setItem('sumit_profile_avatar', dataURL);
+  loadSavedMedia();
+
+  const s = document.getElementById('profileUploadSuccess');
+  s.classList.remove('hidden');
+  setTimeout(() => s.classList.add('hidden'), 3000);
+} catch (error) {
+  console.error('Profile picture save failed:', error);
+  alert('Profile picture save nahi hui. Image ka size kam karke dobara try karein.');
+}
+
           loadSavedMedia();
           const s = document.getElementById('profileUploadSuccess');
           s.classList.remove('hidden');
@@ -1111,17 +1122,56 @@
     });
 
     // Hero Video Upload
-    document.getElementById('cmsVideoUpload').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const videoURL = URL.createObjectURL(file);
-        document.getElementById('mainShowreelVideo').src = videoURL;
-        document.getElementById('mainShowreelVideo').play();
-        const s = document.getElementById('videoUploadSuccess');
-        s.classList.remove('hidden');
-        setTimeout(() => s.classList.add('hidden'), 3000);
-      }
-    });
+    // Hero Video Upload
+document.getElementById('cmsVideoUpload').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+
+  if (!file) return;
+
+  // Check video size: maximum 50 MB for this localStorage approach
+  if (file.size > 50 * 1920 * 1080) {
+    alert('Video 50 MB se chhoti honi chahiye.');
+    e.target.value = '';
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function (evt) {
+    try {
+      const videoData = evt.target.result;
+
+      // Save video in browser storage
+      localStorage.setItem('sumit_hero_video', videoData);
+
+      // Show saved video
+      const video = document.getElementById('mainShowreelVideo');
+      video.src = videoData;
+      video.load();
+
+      video.play().catch(() => {
+        console.log('Video saved. Playback may require user interaction.');
+      });
+
+      const success = document.getElementById('videoUploadSuccess');
+      success.classList.remove('hidden');
+
+      setTimeout(() => {
+        success.classList.add('hidden');
+      }, 3000);
+
+    } catch (error) {
+      console.error('Video save error:', error);
+      alert('Video save nahi hui. Video chhoti karke dobara try karein.');
+    }
+  };
+
+  reader.onerror = function () {
+    alert('Video read nahi ho paayi. Dobara try karein.');
+  };
+
+  reader.readAsDataURL(file);
+});
 
     // Add Project Handler
     document.getElementById('newProjectForm').addEventListener('submit', (e) => {
